@@ -1,0 +1,58 @@
+﻿{% extends 'TemplateBase.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block extra_css %}
+    <link href="{% static 'css/StyleSheet1.css' %}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Project</h1>
+            <hr>
+            
+                {% for x in parents %}
+                <div class="card">
+                    <div class="card-header">
+                        <h2>{{x.name}}</h2>
+                    </div>
+                    <div class="card-body">
+                        <a href="{% url 'BinderRetrieveView' pk=x.id %}">Link to Project Detail</a>
+                        {% for k,v in x.items %}
+                        {% if k != 'folders' %}
+                            <p>{{k}}</p>
+                            <p>{{v}}</p>
+					    {% else %}
+                            {{ v|length }}
+                        {% endif %}
+
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script>
+$(document).ready( function () {
+    {% for x in parents %}
+    $('#sortableTable{{ forloop.counter }}').DataTable();
+    {% endfor %}
+} );
+</script>
+<style>
+    .table th {
+        cursor: pointer;
+    }
+
+    .table th:hover {
+        background-color: #396285;
+        color: #ffffff;
+    }
+</style>
+{% endblock %}

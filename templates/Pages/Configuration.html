@@ -1,0 +1,107 @@
+﻿{% extends 'TemplateBase.html' %}
+{% load bootstrap5 %}
+{% load static %}
+{% block extra_css %}
+    <link href="{% static 'css/StyleSheet1.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+<form  method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create</button>
+</form>
+
+{% for doctKey, doctValue in parent.items %}
+{% if doctKey == 'ipWhois' %}
+    
+    <b>{{doctKey}}</b>
+        <table>
+        {% for whois in doctValue %}
+        {{whois.ip}}
+            {% for k,v in whois.whois.items %}
+                    <tr>
+                        <th>{{k}}</th>
+                        <td>{{v}}</td>
+                    </tr>
+			{% endfor %}
+        {% endfor %}
+        </table>
+{% elif doctKey != 'dataDoct' %}
+    <b>{{doctKey}}</b><p>{{doctValue}}</p>
+    {% else %}
+ 
+    <div class="TableDivFile">
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names..">
+        <button onclick="prevPage()">Prev</button>
+        <button onclick="nextPage()">Next</button>
+        <p>Page: <span id="page"></span> / <span id="total_pages"></span></p>
+        <table id="MyFileTable" class="MyFileTable">
+            <thead>
+                <tr>
+                    {% for k,v in doctValue.0.items %}
+                        <th>{{k}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for doc in doctValue %}
+                <tr>
+                {% for k,v in doc.items %}
+                    
+                        <td>{{v}}</td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <button onclick="prevPage()">Prev</button>
+        <button onclick="nextPage()">Next</button>
+        <p>Page: <span id="page"></span> / <span id="total_pages"></span></p>
+        </div>
+    {% endif %}
+{% endfor %}
+</div>
+<script>
+let current_page = 1;
+let records_per_page = 25;
+let rows = [];
+let numPages = 0;
+
+function prevPage() {
+    if (current_page > 1) {
+        current_page--;
+        changePage(current_page);
+    }
+}
+
+function nextPage() {
+    if (current_page < numPages) {
+        current_page++;
+        changePage(current_page);
+    }
+}
+
+function changePage(page) {
+    const table = document.getElementById("MyFileTable");
+    const tbody = table.getElementsByTagName("tbody")[0];
+    
+    if (page < 1) page = 1;
+    if (page > numPages) page = numPages;
+
+    tbody.innerHTML = "";
+
+    for (let i = (page - 1) * records_per_page; i < (page * records_per_page) && i < rows.length; i++) {
+        tbody.appendChild(rows[i]);
+    }
+
+    document.getElementById("page").innerText = page;
+    document.getElementById("total_pages").innerText = numPages;
+}
+
+
+
+
+</script>
+{% endblock %}

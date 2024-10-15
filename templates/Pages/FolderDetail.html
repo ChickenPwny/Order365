@@ -1,0 +1,194 @@
+﻿{% extends 'TemplateBase.html' %}
+{% load bootstrap5 %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/StyleSheet1.css' %}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+    <div class="FormContainer">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Create</button>
+        </form>
+    </div>
+    <div class="FileViewContainer">
+        {% for key, value in parent.items %}
+            <table class="table table-bordered table-striped" id="sortableTable{{ forloop.counter }}">
+                {{key}}
+                {% if key == 'files' %}
+                    {% for subvalue in value %}
+<div class="">
+                        {% for k,v in subvalue.items %}
+                            {% if k == 'id' %}
+                                <a href="{% url 'FileView' pk=v %}">Link to Project Detail</a>
+                                <form id="processSingles" method="POST" action="{% url 'analytics_processSingles' Folderpk=parent.id Filepk=v %}">
+                                    {% csrf_token %}
+                                    {{ PSForm.as_p }}
+                                    <button type="submit">Process file {{v}}</button>
+                                </form>
+                                <form id="deleteSingles" method="POST" action="{% url 'analytics_deleteSingles' Folderpk=parent.id Filepk=v %}">
+                                    {% csrf_token %}
+                                    {{ DPSForm.as_p }}
+                                    <button type="submit">Clear {{v}}</button>
+                                </form>
+                                <form method="POST" action="{% url 'FileViewDelete' Folderpk=parent.id Filepk=v %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="submit" value="Delete">
+                                </form>
+                            {% elif k == 'userMap' %}
+                            {{v}}
+                                        {% with new_x=v|slice:"9:" %}
+                                            <iframe src="{{ new_x }}" width="100%" height="600px"></iframe>
+                                        {% endwith %}
+
+                            {% elif k == 'ip_address_counts' %}
+                                {{v|length}}
+                                {{v}}
+                                <div class="radio-buttons">
+                                    <input type="radio" id="mean" name="statistic" value="mean" onclick="sortData('mean')">
+                                    <label for="mean">Mean</label><br>
+                                    <input type="radio" id="mode" name="statistic" value="mode" onclick="sortData('mode')">
+                                    <label for="mode">Mode</label><br>
+                                    <input type="radio" id="median" name="statistic" value="median" onclick="sortData('median')">
+                                    <label for="median">Median</label><br>
+                                </div>
+                                <canvas id="ipChart{{ forloop.parentloop.counter }}" class="ipcount"></canvas>
+                                <script>
+                                    function getRandomColor() {
+                                        return '#' + Math.floor(Math.random() * 16777215).toString(16);
+                                    }
+
+                                    function getMedian(arr) {
+                                        const mid = Math.floor(arr.length / 2),
+                                        nums = [...arr].sort((a, b) => a - b);
+                                        return arr.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2;
+                                    }
+
+                                    function getMode(arr) {
+                                        return arr.sort((a,b) =>
+                                            arr.filter(v => v===a).length
+                                            - arr.filter(v => v===b).length
+                                        ).pop();
+                                    }
+
+                                    function getMean(arr) {
+                                        return arr.reduce((a, b) => a + b) / arr.length;
+                                    }
+
+                                    var ip_address_counts ={{v|safe}};
+                                    var labels = Object.keys(ip_address_counts);
+                                    var data = Object.values(ip_address_counts);
+                                    var colors = data.map(() => getRandomColor());
+
+                                    var ctx;
+                                    var chart;
+
+                                    if (document.getElementById('ipChart{{ forloop.parentloop.counter }}')) {
+                                        ctx = document.getElementById('ipChart{{ forloop.parentloop.counter }}').getContext('2d');
+                                        chart = new Chart(ctx, {
+                                            type: 'bar',
+                                            data: {
+                                                labels: labels,
+                                                datasets: [{
+                                                    label: 'IP Address Counts',
+                                                    data: data,
+                                                    backgroundColor: colors,
+                                                    borderColor: colors,
+                                                    borderWidth: 1
+                                                }]
+                                            },
+                                            options: {
+                                                scales: {
+                                                    y: {
+                                                        beginAtZero: true
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+
+                                    function sortData(statistic) {
+                                        var sortedData;
+                                        var sortedLabels;
+
+                                        if (statistic === 'mean') {
+                                            sortedData = data.sort((a, b) => getMean(a) - getMean(b));
+                                            sortedLabels = labels.sort((a, b) => getMean(ip_address_counts[a]) - getMean(ip_address_counts[b]));
+                                        } else if (statistic === 'mode') {
+                                            sortedData = data.sort((a, b) => getMode(a) - getMode(b));
+                                            sortedLabels = labels.sort((a, b) => getMode(ip_address_counts[a]) - getMode(ip_address_counts[b]));
+                                        } else if (statistic === 'median') {
+                                            sortedData = data.sort((a, b) => getMedian(a) - getMedian(b));
+                                            sortedLabels = labels.sort((a, b) => getMedian(ip_address_counts[a]) - getMedian(ip_address_counts[b]));
+                                        }
+
+                                        if (chart) {
+                                            chart.data.labels = sortedLabels;
+                                            chart.data.datasets[0].data = sortedData;
+                                            chart.update();
+                                        }
+                                    }
+                                </script>
+                            {% elif k == 'dataDoct' %}
+                                {{ v|length }}
+                            {% else  %}
+                                {{k}}{{ v }}
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+                    {% endfor %}
+                {% elif key == 'id' %}
+                    <form id="ProcessForm" method="POST" action="{% url 'analytics_process' value %}">
+                        {% csrf_token %}
+                        {{ ProcessForm.as_p }}
+                        <button type="submit">Process</button>
+                    </form>
+
+                    <form id="DeleteForm" method="POST" action="{% url 'analytics_delete' value %}">
+                        {% csrf_token %}
+                        {{ DeleteForm.as_p }}
+                        <button type="submit">Delete</button>
+                    </form>
+
+                    <script>
+                        window.onload = function() {
+                            document.getElementById('DeleteForm').addEventListener('submit', function(event) {
+                                event.preventDefault();  // Prevent the form from being submitted normally
+
+                                var form = event.target;
+                                var url = form.action;
+                                var csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                                fetch(url, {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'X-CSRFToken': csrfToken
+                                    }
+                                }).then(function(response) {
+                                    // Handle the response here
+                                });
+                            });
+                        }
+                    </script>
+                {% elif key == 'ipWhois' %}
+                    <table>
+                        {% for who in value %}
+                            {{who}}
+                            {% for k,v in who.items %}
+                                <p>{{k}} {{v}} </p>
+                            {% endfor %}
+                        {% endfor %}
+                    </table>
+
+                {% endif %}
+            </table>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}

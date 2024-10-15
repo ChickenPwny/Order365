@@ -1,0 +1,267 @@
+﻿// Mixins
+@mixin stacked-shadow($through, $even-color, $odd-color) {
+    $shadow : "";
+    @for $i from 1 through $through {
+        @if ($i % 2 == 0) {
+            $shadow : $shadow + "#{$i}px #{$i}px 0 0 #{$even-color}";
+        }
+        @else {
+            $shadow : $shadow + "#{$i}px #{$i}px 0 0 #{$odd-color}";            
+        }
+        $shadow : $shadow + if($i != $through, ", ", "");
+    }
+    box-shadow: unquote($shadow);
+}
+
+
+body {
+    background-color: #1fc8db;
+    background-image: linear-gradient(141deg, #9fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
+    font-size: 0.875rem; /* Smaller text size */
+}
+
+.container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.15);
+    margin-top: 2em;
+    padding: 2em;
+    display: flex; /* Add this to make the container flexible */
+    flex-wrap: wrap; /* Add this to allow the container to wrap its children */
+    align-items: flex-start; /* Add this to prevent the table from stacking on top of each other */
+    flex-direction: column; /* Add this to make the container stretch vertically for the child */
+    min-height: 100vh; /* Add this to make the container bigger for the child */
+}
+
+h1, h2, h4 {
+    color: #396285;
+}
+
+.card {
+    background-color: #eee;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.card ::before {
+    content: "";
+    width: 50px;
+    height: 5px;
+    background-color: #ddd;
+    position: absolute;
+    top: -5px;
+    left: calc(50% - 25px);
+    border-radius: 50%;
+}
+
+.card ::after {
+    content: "";
+    width: 50px;
+    height: 5px;
+    background-color: #ddd;
+    position: absolute;
+    bottom: -5px;
+    left: calc(50% - 25px);
+    border-radius: 50%;
+}
+
+.card-header {
+    background-color: #396285;
+    color: #ffffff;
+}
+
+.card-body {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+.analytics p {
+    color: #2e383c;
+}
+
+.TableDivFile {
+    width: 100%;
+	overflow-x: auto;
+}
+
+.MyFileTable {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.15);
+}
+
+.MyFileTable thead tr {
+    width:auto;
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+
+.MyFileTable th, .MyFileTable td {
+    padding: 12px 15px;
+}
+
+.MyFileTable tbody tr {
+    border-bottom: 1px solid #dddddd;
+    font-size: 10px;
+}
+
+.MyFileTable tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.MyFileTable tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+        #ipChart {
+            max-width: 600px;
+            max-height: 400px;
+        }
+        .chartjs-render-monitor {
+            width: 100% !important;
+            height: auto !important;
+        }
+#ipChart {
+    max-width: 600px;
+    max-height: 400px;
+}
+.chartjs-render-monitor {
+    width: 100% !important;
+    height: auto !important;
+}
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+}
+
+.table th,
+.table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+}
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody + tbody {
+    border-top: 2px solid #dee2e6;
+}
+
+.table .table {
+    background-color: #fff;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.table-hover tbody tr:hover {
+    color: #212529;
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.nested_dict td {
+    font-size: 0.8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+    transition: max-width 0.5s ease-in-out;
+}
+
+.nested_dict td:hover {
+    max-width: 100%;
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+}
+
+.table th,
+.table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+}
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody + tbody {
+    border-top: 2px solid #dee2e6;
+}
+
+.table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+    min-width: 36ch; /* Set minimum width to support UUID */
+    overflow: auto; /* Add overflow auto to handle excess content */
+    text-overflow: ellipsis; /* Use ellipsis for overflow content */
+    white-space: nowrap; /* Prevent text from wrapping onto next line */
+}
+
+
+.table .table {
+    background-color: #fff;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.table-hover tbody tr:hover {
+    color: #212529;
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.nested_dict td {
+    font-size: 0.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+    transition: max-width 0.5s ease-in-out;
+}
+
+.nested_dict td:hover {
+    max-width: 100%;
+}
+
+.Folder {
+    display: flex; /* Add this line to align elements horizontally */
+    flex-direction: row; /* Add this line to specify the direction of the elements */
+    flex-wrap: wrap; /* Add this line to allow the items to wrap if there's not enough space */
+}
+.folderDiv {
+    width: 240px;
+    height: 360px;
+    background: #f9dd3f;
+    position: relative;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    overflow: hidden;
+    margin: 10px;
+}
+
+.folderDiv:before {
+    content: '';
+    width: 50%;
+    height: 20px;
+    border-radius: 0 100px 0 0;
+    background: #f9dd3f;
+    position: absolute;
+    top: -20px;
+    left: 10px;
+}

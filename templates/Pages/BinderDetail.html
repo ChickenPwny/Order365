@@ -1,0 +1,69 @@
+﻿{% extends 'TemplateBase.html' %}
+{% load bootstrap5 %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/StyleSheet1.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+    const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
+        v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+        )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+    document.querySelectorAll('th.sortable').forEach(th => th.addEventListener('click', (() => {
+        const table = th.closest('table');
+        Array.from(table.querySelectorAll('tr:nth-child(n+2)')) // Changed from n+2 to n+1
+            .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+            .forEach(tr => table.appendChild(tr) );
+    })));
+});
+</script>
+<div class="container">
+<form method="GET" id="filterForm">
+    <input type="text" name="query" id="queryInput" placeholder="Enter query here">
+    <input type="submit" value="Filter">
+</form>
+
+Below is where we will create the folders for the project binder. 
+<form  method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create</button>
+</form>
+
+{% for key,value in parents.items %}
+    {% if key != 'folders' and key != 'ip_address_counts ' %}
+        <h1>{{ key }}</h1>
+        <p>{{ value }}</p>
+    {% endif %}
+{% endfor %}
+
+Here are all the folders, for this project binder. 
+
+{% for key,value in parents.items %}
+    {% if key == 'folders' %}
+    <h1>{{ key }}</h1>
+    <div class="Folder">
+        {% for folder in value %}
+        <div class="folderDiv">
+        {% for k,v in folder.items %}
+        {% if k == 'id' %}
+            <p>{{ k }} {{v}} </p>
+            <a href="/Binder/Folder/{{v}}">Link Text</a>
+        {% elif k == 'name' %}
+        <p>{{ k }} {{v}}</p>
+        {% else %}
+ 
+        {% endif %}
+        {% endfor %}
+        </div>
+        {% endfor %}
+</div>
+    {% endif %}
+{% endfor %}
+</div>
+
+{% endblock %}

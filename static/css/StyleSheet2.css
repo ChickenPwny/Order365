@@ -1,0 +1,21 @@
+﻿/* General table styles */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Header styles */
+.thead-dark {
+    background-color: #343a40;
+    color: #fff;
+}
+
+/* Row styles */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, .05);
+}
+
+.table-hover tbody tr:hover {
+    color: #212529;
+    background-color: rgba(0, 0, 0, .075);
+}
